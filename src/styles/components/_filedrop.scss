@@ -1,0 +1,30 @@
+.filedrop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 40px);
+    max-width: 400px;
+    height: 100px;
+    margin: 0 auto;
+    color: $font-color;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+        background-color: rgba(0,0,0,0.1);
+        color: $main-color;
+    }
+
+    &--accept {
+        border: 2px solid #81e356;
+        box-shadow: inset 0 0 10px 5px #81e356;
+    }
+
+    &--reject {
+        border: 2px solid #e35656;
+        box-shadow: inset 0 0 10px 5px #e35656;
+    }
+}

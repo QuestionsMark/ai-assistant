@@ -1,0 +1,58 @@
+.form {
+    &__inp {
+        width: 100%;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 0;
+        font-family: $main-font-family;
+
+        &-container {
+            width: 100%;
+            position: relative;
+        }
+
+        &-password {
+            &-btn {
+                position: absolute;
+                right: 6px;
+                top: 50%;
+                transform: translate(0, -50%);
+                color: $main-color;
+                cursor: pointer;
+            }
+
+            &-icon {
+                font-size: 20px;
+            }
+        }
+    }
+
+    &__textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    &__images-preview {
+        &-list {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        &-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: calc(33.3333% - 7px);
+            aspect-ratio: 1/1;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: rgba(95, 159, 156, 0.4);
+
+            &-img {
+                width: 100%;
+            }
+        }
+    }
+}
