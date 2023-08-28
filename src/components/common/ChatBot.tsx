@@ -16,7 +16,7 @@ export const ChatBot = ({ system }: Props) => {
             const res = await chat.say(message, role, functionName);
 
             if (res?.functionCall) {
-                handleNewUserMessage(handleCallableFunction(res.functionCall), ChatCompletionRequestMessageRoleEnum.Function, res.functionCall.name);
+                handleNewUserMessage(await handleCallableFunction(res.functionCall), ChatCompletionRequestMessageRoleEnum.Function, res.functionCall.name);
             }
 
             if (res?.content) {

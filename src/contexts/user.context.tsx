@@ -14,11 +14,9 @@ interface Props {
 }
 
 export const safePaths: string[] = [
-    '',
     'signup',
     'login',
     'password-reset',
-    'account-activate',
 ];
 const checkRedirect = (pathname: string): boolean => {
     const actualPath = pathname.split('/')[1];
@@ -49,7 +47,7 @@ export const UserProvider = ({ children }: Props) => {
             setTimeout(() => {
                 setLoading(false);
                 if (!response.status) {
-                    if (checkRedirect(pathname)) return navigate('/');
+                    if (checkRedirect(pathname)) return navigate('/login');
                     return;
                 }
                 setUser(response.results);

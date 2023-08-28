@@ -16,19 +16,72 @@ const parameters: CreateChatCompletionRequest = {
     messages: [],
     functions: [
         {
-            name: 'getInformationAboutBoss',
-            description: "Get information about secretary boss.",
+            name: 'getInformationAboutItems',
+            description: "Get information about items from RPG game.",
             parameters: {
                 type: 'object',
                 properties: {
                     kind: {
                         type: 'string',
                         description: 'Type of information to get.',
-                        enum: [GetInformationKind.Availability, GetInformationKind.Schedule],
+                        enum: [GetInformationKind.ItemsList, GetInformationKind.ItemsCount],
+                    },
+
+                },
+            },
+        },
+        {
+            name: 'addItemToDeposit',
+            description: 'Adds an item to the deposit with the given name.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    itemName: {
+                        type: 'string',
+                        description: 'Item name.',
                     },
                 },
             },
-        }
+        },
+        {
+            name: 'changeItemStatusToFinished',
+            description: 'Changes the status of an item to finished.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    itemName: {
+                        type: 'string',
+                        description: 'Item name.',
+                    },
+                },
+            },
+        },
+        {
+            name: 'removeItemFromDeposit',
+            description: 'Removes the item from the deposit with the given name.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    itemName: {
+                        type: 'string',
+                        description: 'Item name.',
+                    },
+                },
+            },
+        },
+        {
+            name: 'removeManyItemsFromDeposit',
+            description: 'Removes items from the deposit with the given names.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    itemsNames: {
+                        type: 'string',
+                        description: 'Item names followed by a comma.',
+                    },
+                },
+            },
+        },
     ],
 };
 

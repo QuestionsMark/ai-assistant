@@ -20,15 +20,8 @@ export namespace User {
 
     //Response
     export interface Response {
-        avatar: string;
-        condition: Condition;
         email: string;
-        fullName: string | null;
-        guidesCount: number;
         id: string;
-        monthEarnings: number;
-        phone: string | null;
-        role: Role;
         username: string;
     }
 }

@@ -7,6 +7,7 @@ import { UserProvider } from './contexts/user.context';
 
 import { App } from './components/layout/App';
 
+import 'react-toastify/dist/ReactToastify.css';
 import './styles/index.scss';
 import 'react-chat-widget/lib/styles.css';
 

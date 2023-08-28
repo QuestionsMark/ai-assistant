@@ -1,71 +1,118 @@
 import { ChatCompletionRequestMessageFunctionCall } from "openai";
+import { fetchTool } from "../utils/api.util";
+import { Item } from "../types";
 
 export enum CallableFunction {
-    GetInformation = 'getInformationAboutBoss',
+    GetInformation = 'getInformationAboutItems',
+    AddItemDoDeposit = 'addItemToDeposit',
+    ChangeItemStatusToFinished = 'changeItemStatusToFinished',
+    RemoveItemFromDeposit = 'removeItemFromDeposit',
+    RemoveManyItemsFromDeposit = 'removeManyItemsFromDeposit',
 }
 
 export enum GetInformationKind {
-    Availability = 'availability',
-    Schedule = 'schedule',
+    ItemsCount = 'itemsCount',
+    ItemsList = 'itemsList',
 }
 
 export interface GetInformationProperties {
     kind: GetInformationKind;
+    itemName?: string;
 }
 
-const getInformation = ({ kind }: GetInformationProperties): string => {
+const getInformation = async ({ kind }: GetInformationProperties): Promise<string> => {
+    console.log({ kind });
     switch (kind) {
-        case GetInformationKind.Availability:
-            return 'Boss is available now.';
-        case GetInformationKind.Schedule:
-            return `{
-                "monday": [
-                    {
-                        "hours": "10:00-13:00",
-                        "description": "Breakfast with family"
-                    },
-                    {
-                        "hours": "15:00-17:00",
-                        "description": "Training on swimming pool."
-                    }
-                ],
-                "tuesday": [
-                    {
-                        "hours": "10:00-19:00",
-                        "description": "work"
-                    }
-                ],
-                "wednesday": [
-                    {
-                        "hours": "10:00-13:00",
-                        "description": "Breakfast with family"
-                    }
-                ],
-                "thursday": [
-                    {
-                        "hours": "10:00-13:00",
-                        "description": "Breakfast with family"
-                    }
-                ],
-                "friday": [
-                    {
-                        "hours": "15:00-17:00",
-                        "description": "Training on swimming pool."
-                    }
-                ],
-                "saturday": [],
-                "sunday": []
-            }`
+        case GetInformationKind.ItemsList: {
+            const response = await fetchTool<Item.Response[]>('assistant/item');
+
+            if (!response.status) throw new Error(response.message);
+
+            return JSON.stringify(response.results);
+        }
+
+        case GetInformationKind.ItemsCount: {
+            const response = await fetchTool<number>('assistant/item/count');
+
+            if (!response.status) throw new Error(response.message);
+
+            return JSON.stringify(response.results);
+        }
+
         default:
             throw new Error('Unknown kind of information.');
     }
 };
 
-export const handleCallableFunction = (call: ChatCompletionRequestMessageFunctionCall): string => {
+export interface AddItemToDepositProperties {
+    itemName: string;
+}
+
+const addItemToDeposit = async ({ itemName }: AddItemToDepositProperties) => {
+    console.log('Add', { itemName });
+    const response = await fetchTool<string>('assistant/item', 'POST', { name: itemName });
+
+    if (!response.status) throw new Error(response.message);
+
+    return response.results;
+};
+
+export interface ChangeItemStatusToFinishedProperties {
+    itemName: string;
+}
+
+const changeItemStatusToFinished = async ({ itemName }: ChangeItemStatusToFinishedProperties) => {
+    console.log('Change status', { itemName });
+    const response = await fetchTool<string>(`assistant/item/finish/${itemName}`, 'PATCH');
+
+    if (!response.status) throw new Error(response.message);
+
+    return response.results;
+};
+
+export interface RemoveItemFromDepositProperties {
+    itemName: string;
+}
+
+const removeItemFromDeposit = async ({ itemName }: RemoveItemFromDepositProperties) => {
+    console.log('Remove', { itemName });
+    const response = await fetchTool<string>(`assistant/item/${itemName}`, 'DELETE');
+
+    if (!response.status) throw new Error(response.message);
+
+    return response.results;
+};
+
+export interface RemoveManyItemsFromDepositProperties {
+    itemsNames: string;
+}
+
+const removeManyItemsFromDeposit = async ({ itemsNames }: RemoveManyItemsFromDepositProperties) => {
+    console.log('Remove many', { itemsNames });
+    const response = await fetchTool<string>(`assistant/items/${itemsNames}`, 'DELETE');
+
+    if (!response.status) throw new Error(response.message);
+
+    return response.results;
+};
+
+export const handleCallableFunction = async (call: ChatCompletionRequestMessageFunctionCall): Promise<string> => {
     try {
         switch (call.name) {
             case CallableFunction.GetInformation:
                 return getInformation(JSON.parse(call.arguments ?? 'null') as GetInformationProperties);
+
+            case CallableFunction.AddItemDoDeposit:
+                return addItemToDeposit(JSON.parse(call.arguments ?? 'null') as AddItemToDepositProperties);
+
+            case CallableFunction.ChangeItemStatusToFinished:
+                return changeItemStatusToFinished(JSON.parse(call.arguments ?? 'null') as ChangeItemStatusToFinishedProperties);
+
+            case CallableFunction.RemoveItemFromDeposit:
+                return removeItemFromDeposit(JSON.parse(call.arguments ?? 'null') as RemoveItemFromDepositProperties);
+
+            case CallableFunction.RemoveManyItemsFromDeposit:
+                return removeManyItemsFromDeposit(JSON.parse(call.arguments ?? 'null') as RemoveManyItemsFromDepositProperties);
 
             default:
                 throw new Error('Unknown function name.');
